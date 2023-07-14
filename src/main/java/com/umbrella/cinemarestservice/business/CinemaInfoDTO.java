@@ -1,12 +1,14 @@
 package com.umbrella.cinemarestservice.business;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+@Getter
 @NoArgsConstructor
 public class CinemaInfoDTO {
     @JsonProperty(value = "total_rows")
