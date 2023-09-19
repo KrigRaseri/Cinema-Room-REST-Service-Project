@@ -30,6 +30,7 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.1")
 
     implementation("ch.qos.logback:logback-core:1.4.8")
+    implementation("org.springframework.boot:spring-boot-starter-webflux:3.1.3")
 }
 
 tasks.withType<Test> {
