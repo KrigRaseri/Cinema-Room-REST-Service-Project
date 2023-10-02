@@ -58,11 +58,17 @@ This was a quick change where I added a PurchaseTicketResponse class and changed
 
 *==Additional Changes==*
 
+- I started using JPA and H2 database for this stage, and added an init service to populate the database with seats if it
+is empty. A file is used for the primary db, and tests use in memory db.
+
 - Instead of returning seats from the controller, I made some response/request dto's that use ticket, a dto for seat, and
 a mapper so the entity seat never leaves the service layer.
+
 - Changed over to using application.properties row and column variables instead of hard coding them, so once set it will
 be the same value for all classes and tests.
+
 - Made CinemaInfo more simple, and be more like a model instead of a model/dto hybrid guy.
+
 - Added logging. Info level for the console, and warn/error for the file for now.
 
 ***==Notes==***
