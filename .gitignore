@@ -36,3 +36,5 @@ out/
 ### VS Code ###
 .vscode/
 /logs/spring.log
+logs/myapp.2023-09-30.log
+logs/myapp.log
