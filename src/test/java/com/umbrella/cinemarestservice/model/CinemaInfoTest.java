@@ -14,7 +14,7 @@ public class CinemaInfoTest {
     @Test
     void testJsonPropertyAnnotations() throws JsonProcessingException, JSONException {
         //Arrange
-        String expectedJson = "{\"total_rows\": 0, \"total_columns\": 0, \"available_seats\": []}";
+        String expectedJson = "{\"total_rows\": 0, \"total_columns\": 0, \"seats\": []}";
         ObjectMapper objectMapper = new ObjectMapper();
         List<Seat> seats = new ArrayList<>();
 

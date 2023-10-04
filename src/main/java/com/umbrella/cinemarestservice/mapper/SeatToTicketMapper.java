@@ -6,6 +6,12 @@ import com.umbrella.cinemarestservice.dto.Ticket;
 import com.umbrella.cinemarestservice.model.Seat;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Mapper class to map a seat entity to a ticket dto, and then to the appropriate response dto.
+ *
+ * @author KrigRaseri (pen name)
+ * @version 1.0
+ */
 @Slf4j
 public class SeatToTicketMapper {
     public ReturnedTicketResponse mapToReturnedTicketResponse(Seat seat) {
