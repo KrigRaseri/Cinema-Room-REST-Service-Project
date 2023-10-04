@@ -1,13 +1,11 @@
 package com.umbrella.cinemarestservice.controller;
 
-import com.umbrella.cinemarestservice.dto.ReturnedTicketResponse;
-import com.umbrella.cinemarestservice.dto.Ticket;
-import com.umbrella.cinemarestservice.dto.PurchaseTicketResponse;
-import com.umbrella.cinemarestservice.dto.TokenRequest;
+import com.umbrella.cinemarestservice.dto.*;
+import com.umbrella.cinemarestservice.exceptionhandling.WrongPasswordException;
 import com.umbrella.cinemarestservice.exceptionhandling.WrongTokenException;
 import com.umbrella.cinemarestservice.model.*;
 import com.umbrella.cinemarestservice.service.CinemaService;
-import com.umbrella.cinemarestservice.exceptionhandling.SeatNotFoundException;
+import com.umbrella.cinemarestservice.exceptionhandling.SeatAlreadyPurchasedException;
 import com.umbrella.cinemarestservice.exceptionhandling.SeatOutOfBoundsException;
 
 import org.junit.jupiter.api.Test;
@@ -35,8 +33,10 @@ class CinemaControllerTest {
     @Mock
     private CinemaService cinemaService;
 
+    // =============================Cinema info tests=======================================
+
     @Test
-    public void testGetCinemaInfo_ShouldReturn81Seats() {
+    void testGetCinemaInfo_ShouldReturn81Seats() {
         // Arrange
         List<Seat> seats = new ArrayList<>();
         IntStream.range(0, 81).forEach(s -> seats.add(new Seat(1, 1, 10)));
@@ -47,11 +47,38 @@ class CinemaControllerTest {
         CinemaInfo result = cinemaService.getCinemaInfo();
 
         // Assert
-        assertThat(result.getAvailableSeats().size()).isEqualTo(81);
+        assertThat(result.getSeats().size()).isEqualTo(81);
+    }
+
+    // =====================================Stats tests =========================================
+    @Test
+    void testGetStats_ShouldReturnStats() {
+        //Arrange
+        CinemaStatsResponse expectedCinemaStatsResponse = new CinemaStatsResponse(5, 20, 40);
+        when(cinemaService.getStats("secret_password")).thenReturn(expectedCinemaStatsResponse);
+
+        //Act
+        ResponseEntity<?> responseEntity = cinemaController.getStatsInfo("secret_password");
+
+        //Assert
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(responseEntity.getBody()).isEqualTo(expectedCinemaStatsResponse);
     }
 
     @Test
-    public void testPurchaseTicket_WhenSeatIsAvailable_ShouldPurchaseSeatSuccessfully() {
+    void testGetStats_WhenWrongPassword_ReturnWrongPasswordException() {
+        // Arrange
+        when(cinemaService.getStats("wrong_password")).thenThrow(new WrongPasswordException());
+
+        // Act
+        assertThatThrownBy(() -> cinemaController.getStatsInfo("wrong_password"))
+                .isInstanceOf(WrongPasswordException.class)
+                .hasMessage("The password is wrong!");
+    }
+
+    // =======================================Purchase tests============================================
+    @Test
+    void testPurchaseTicket_WhenSeatIsAvailable_ShouldPurchaseSeatSuccessfully() {
         // Arrange
         Seat expectedSeat = new Seat(1, 1, 10);
         Ticket ticket = new Ticket(1, 1, 10);
@@ -69,19 +96,19 @@ class CinemaControllerTest {
     }
 
     @Test
-    public void testPurchaseSeat_WhenPurchasingUnavailableSeat_ShouldThrowSeatNotFoundException() {
+    void testPurchaseSeat_WhenPurchasingUnavailableSeat_ShouldThrowSeatNotFoundException() {
         // Arrange
         Seat seat = new Seat(1, 1, 10);
-        when(cinemaService.purchaseSeat(seat)).thenThrow(new SeatNotFoundException());
+        when(cinemaService.purchaseSeat(seat)).thenThrow(new SeatAlreadyPurchasedException());
 
         // Act and Assert
         assertThatThrownBy(() -> cinemaController.purchaseTicket(seat))
-                .isInstanceOf(SeatNotFoundException.class)
+                .isInstanceOf(SeatAlreadyPurchasedException.class)
                 .hasMessage("The ticket has been already purchased!");
     }
 
     @Test
-    public void testPurchaseTicket_ShouldThrowSeatOutOfBoundsException() {
+    void testPurchaseTicket_ShouldThrowSeatOutOfBoundsException() {
         // Arrange
         Seat seat = new Seat(10, 10, 10);
         when(cinemaService.purchaseSeat(seat)).thenThrow(new SeatOutOfBoundsException());
@@ -92,8 +119,9 @@ class CinemaControllerTest {
                 .hasMessage("The number of a row or a column is out of bounds!");
     }
 
+    //==================================Return tests===============================================
     @Test
-    public void testReturnTicket_WhenTokenIsValid_ReturnsTicket() {
+    void testReturnTicket_WhenTokenIsValid_ReturnsTicket() {
         // Arrange
         Ticket ticket = new Ticket(1, 1, 10);
         String pseudoUUID = "1234-1234-1234-1234";
