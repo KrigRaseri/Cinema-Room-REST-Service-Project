@@ -62,15 +62,10 @@ public class CinemaService {
     /**
      * Retrieves statistics about the cinema, including income, available seats, and purchased seats.
      *
-     * @param password The password required to access statistics.
      * @return CinemaStatsResponse object containing cinema statistics.
      * @throws WrongPasswordException if the provided password is incorrect.
      */
-    public CinemaStatsResponse getStats(String password) {
-
-        if(password == null || !password.equals("super_secret")) {
-            throw new WrongPasswordException();
-        }
+    public CinemaStatsResponse getStats() {
 
         List<Seat> seatsList = seatRepository.findAll();
         int income = 0;
