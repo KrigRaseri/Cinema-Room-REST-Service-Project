@@ -104,10 +104,12 @@ check, and a simple null check. I also added a test to check if the WrongPasswor
 
 **==Additional Changes==**
 
+- Added spring security to the project for practice.
 - A few minor name changes here and there, but nothing major enough to talk about it.
 
 **==Notes==**
 
 This stage was too easy, but oh well. I wish they would have just jumped into spring security, but they probably wanted
-to keep it pretty simple. On the other hand I could have just added it like I did with JPA, H2, etc., but I didn't want to
-since there was only the single pass check. It would probably be better to just move on to a new Spring project.
+to keep it pretty simple. Instead, I just did it myself and implemented some basic spring security stuff for practice.
+I can still do a lot more with it, but I'm ready to move on to a new spring project.
+
