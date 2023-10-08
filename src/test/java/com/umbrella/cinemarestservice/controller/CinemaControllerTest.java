@@ -55,10 +55,10 @@ class CinemaControllerTest {
     void testGetStats_ShouldReturnStats() {
         //Arrange
         CinemaStatsResponse expectedCinemaStatsResponse = new CinemaStatsResponse(5, 20, 40);
-        when(cinemaService.getStats("secret_password")).thenReturn(expectedCinemaStatsResponse);
+        when(cinemaService.getStats()).thenReturn(expectedCinemaStatsResponse);
 
         //Act
-        ResponseEntity<?> responseEntity = cinemaController.getStatsInfo("secret_password");
+        ResponseEntity<?> responseEntity = cinemaController.getStatsInfo();
 
         //Assert
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -68,10 +68,10 @@ class CinemaControllerTest {
     @Test
     void testGetStats_WhenWrongPassword_ReturnWrongPasswordException() {
         // Arrange
-        when(cinemaService.getStats("wrong_password")).thenThrow(new WrongPasswordException());
+        when(cinemaService.getStats()).thenThrow(new WrongPasswordException());
 
         // Act
-        assertThatThrownBy(() -> cinemaController.getStatsInfo("wrong_password"))
+        assertThatThrownBy(() -> cinemaController.getStatsInfo())
                 .isInstanceOf(WrongPasswordException.class)
                 .hasMessage("The password is wrong!");
     }
