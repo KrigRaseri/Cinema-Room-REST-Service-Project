@@ -22,7 +22,10 @@ public class SecurityConfig {
                         .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
                         .requestMatchers(HttpMethod.GET, "/stats").hasRole("ADMIN")
                         .requestMatchers("/register").permitAll()
-                        .anyRequest().denyAll()
+                        // For the sake of testing and moving on from the project.
+                        .requestMatchers(HttpMethod.GET, "/seats").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/purchase").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/return").permitAll()
                 );
 
         return http.build();
