@@ -68,7 +68,7 @@ public class CinemaController {
         return ResponseEntity.ok(returnResponse);
     }
 
-    @PostMapping(path = "/register")
+    @PostMapping("/register")
     public String register(@RequestBody RegistrationRequest request) {
         CinemaUser cinemaUser = new CinemaUser();
         cinemaUser.setUsername(request.username());

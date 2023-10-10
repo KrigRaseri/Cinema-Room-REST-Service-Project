@@ -1,9 +1,6 @@
 package com.umbrella.cinemarestservice.controller;
 
-import com.umbrella.cinemarestservice.dto.CinemaStatsResponse;
-import com.umbrella.cinemarestservice.dto.ReturnedTicketResponse;
-import com.umbrella.cinemarestservice.dto.PurchaseTicketResponse;
-import com.umbrella.cinemarestservice.dto.TokenRequest;
+import com.umbrella.cinemarestservice.dto.*;
 import com.umbrella.cinemarestservice.exceptionhandling.WrongPasswordException;
 import com.umbrella.cinemarestservice.exceptionhandling.WrongTokenException;
 import com.umbrella.cinemarestservice.model.*;
@@ -16,12 +13,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.util.Base64Utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -72,9 +73,7 @@ class CinemaControllerIntegrationTest {
     /**
      * Test case for verifying correct statistics for the cinema are returned.
      */
-    //Needs fixed. Broken due to Spring security implementation.
-    @Disabled
-    @Order(1)
+    @Order(2)
     @Test
     void testGetStats_ShouldReturnStats() {
         //Arrange
@@ -98,7 +97,8 @@ class CinemaControllerIntegrationTest {
         CinemaStatsResponse expectedCinemaStatsResponse = new CinemaStatsResponse(30, 78, 3);
 
         //Act
-        webTestClient.get().uri("/stats?password=super_secret")
+        webTestClient.get().uri("/stats")
+                .header(HttpHeaders.AUTHORIZATION, "Basic a3JpZzpwYXNz")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(CinemaStatsResponse.class)
@@ -109,17 +109,22 @@ class CinemaControllerIntegrationTest {
                 });
     }
 
-    //Needs fixed
-    @Disabled
+    // ====================Register test=================================
+    @Order(1)
     @Test
-    void testGetStats_WhenWrongPassword_ReturnWrongPasswordException() {
+    void testRegister_WhenUserIsNotRegistered_ShouldRegisterUserSuccessfully() {
+        //Arrange
+        RegistrationRequest user = new RegistrationRequest("krig", "pass", "ROLE_ADMIN");
+
         //Act
-        webTestClient.get().uri("/stats?password=wrong_password")
+        webTestClient.post().uri("/register")
+                .bodyValue(user)
                 .exchange()
-                .expectStatus().isUnauthorized()
-                .expectBody(WrongPasswordException.class)
-                .value(wrongPasswordException -> assertThat(wrongPasswordException.getMessage())
-                        .isEqualTo("The password is wrong!"));
+                .expectStatus().isOk()
+                .expectBody(String.class)
+                .value(response -> assertThat(response).isEqualTo("New cinemaUser successfully registered"));
+
+
     }
 
     // ====================Purchase tests=============================
@@ -127,7 +132,7 @@ class CinemaControllerIntegrationTest {
      * Test case for verifying that a successful purchase returns a purchased ticket.
      * It ensures that the seat is marked as unavailable after the purchase.
      */
-    @Order(2)
+    @Order(3)
     @Test
     void testPurchaseTicket_WhenSeatIsAvailable_ReturnsPurchasedTicket() {
         //Arrange

@@ -1,5 +1,6 @@
 package com.umbrella.cinemarestservice.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -23,8 +24,13 @@ public class CinemaUser implements UserDetails {
     @GeneratedValue
     private Integer id;
 
+    @JsonProperty("username")
     private String username;
+
+    @JsonProperty("password")
     private String password;
+
+    @JsonProperty("authority")
     private String authority;
 
     @Override
